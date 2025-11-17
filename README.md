@@ -19,3 +19,4 @@ Use *clone* if you want to train your git abilities, use *fork* if you know what
 
 ## Resolve the exercises
 1. Commit progressively when resolving the exercise and push changes on your repo
+# Solution of lab 9 exercises
