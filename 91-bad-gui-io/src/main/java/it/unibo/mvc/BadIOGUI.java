@@ -3,19 +3,21 @@ package it.unibo.mvc;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,19 +48,63 @@ public class BadIOGUI {
         canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        /*
-         * Handlers
-         */
-        write.addActionListener(new ActionListener() {
+
+        // ex 1.0
+        final JPanel newPanell = new JPanel();
+        newPanell.setLayout(new BoxLayout(newPanell, BoxLayout.LINE_AXIS));
+        final JButton writeButton = new JButton("Write");
+        final JButton readButton = new JButton("Read");
+        writeButton.addActionListener(new ActionListener() {
+
             @Override
+            public void actionPerformed(final ActionEvent e) {
+                try
+                (
+                    BufferedWriter writerFile = new BufferedWriter(
+                        new OutputStreamWriter(
+                            new FileOutputStream(PATH), StandardCharsets.UTF_16))
+                ) {
+                    writerFile.write(Integer.toString(randomGenerator.nextInt()));
+                    writerFile.newLine();
+                 } catch (final IOException t) {
+                    t.printStackTrace(); //NOPMD
+                }
+            }
+        });
+        readButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try 
+                (
+                    BufferedReader readerFile = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(PATH), StandardCharsets.UTF_16))
+                ) {
+                    String line;
+                   while ((line = readerFile.readLine()) != null) { //NOPMD
+                        System.out.println(line); //NOPMD
+                   }
+                } catch (final IOException t) {
+                    t.printStackTrace(); //NOPMD
+                }
+            }
+
+        });
+        newPanell.add(writeButton);
+        newPanell.add(readButton);
+        canvas.add(newPanell);
+
+        /*
+        * Handlers
+        */
+        /*
+        write.addActionListener(new ActionListener() {
+        @Override
             public void actionPerformed(final ActionEvent ignored) {
-                /*
-                 * This would be VERY BAD in a real application.
-                 *
-                 * This makes the Event Dispatch Thread (EDT) work on an I/O
-                 * operation. I/O operations may take a long time, during which
-                 * your UI becomes completely unresponsive.
-                 */
+                * This would be VERY BAD in a real application.
+                *
+                * This makes the Event Dispatch Thread (EDT) work on an I/O
+                * operation. I/O operations may take a long time, during which
+                * your UI becomes completely unresponsive.
                 try (PrintStream ps = new PrintStream(PATH, StandardCharsets.UTF_8)) {
                     ps.print(randomGenerator.nextInt());
                 } catch (final IOException e) {
@@ -67,6 +113,7 @@ public class BadIOGUI {
                 }
             }
         });
+        */
     }
 
     private void display() {
@@ -88,6 +135,7 @@ public class BadIOGUI {
          * on screen. Results may vary, but it is generally the best choice.
          */
         frame.setLocationByPlatform(true);
+        frame.pack();
         /*
          * OK, ready to push the frame onscreen
          */
