@@ -1,6 +1,8 @@
 package it.unibo.mvc;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,36 +18,37 @@ import javax.swing.JTextArea;
  */
 public final class SimpleGUI {
 
-    private final JFrame frame = new JFrame("My first application");
     private static final int PROPORTION = 5;
-    private Controller controller;
+    private final JFrame frame = new JFrame("My first application");
+    private final Controller controller;
 
+    /**
+     * Create the simple interface.
+     */
     public SimpleGUI() {
         controller = new Controller();
         final JPanel canvPanel = new JPanel();
         final JTextArea textArea = new JTextArea();
         final JButton buttonSave = new JButton("Save");
-        
+ 
         textArea.setText("");
         canvPanel.setLayout(new BorderLayout());
         buttonSave.addActionListener(new ActionListener() {
-             @Override  
+            @Override
             public void actionPerformed(final ActionEvent e) {
                 try {
                     controller.writeToFile(textArea.getText());
                 } catch (final IOException t) {
-                    t.printStackTrace();// NOPMD
+                    t.printStackTrace(); // NOPMD
                 }
-            }    
-        
+            }
         });
 
         canvPanel.add(textArea, BorderLayout.CENTER);
         canvPanel.add(buttonSave, BorderLayout.SOUTH);
         frame .setContentPane(canvPanel);
-
-
     }
+
     private void display() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -58,7 +61,13 @@ public final class SimpleGUI {
         frame.setVisible(true);
 
     }
-    public static void main(String... args) {
+
+    /**
+     *  Launches the application.
+     * 
+     * @param args unused
+     */
+    public static void main(final String... args) {
         new SimpleGUI().display();
     }
 

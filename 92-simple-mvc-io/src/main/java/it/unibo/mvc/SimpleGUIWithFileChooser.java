@@ -1,17 +1,18 @@
 package it.unibo.mvc;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 
 /**
  * A very simple program using a graphical interface.
@@ -19,10 +20,13 @@ import javax.swing.JTextField;
  */
 public final class SimpleGUIWithFileChooser {
 
-   private final JFrame frame = new JFrame("My first application");
     private static final int PROPORTION = 5;
-    private Controller controller;
+    private final JFrame frame = new JFrame("My first application");
+    private final Controller controller;
 
+    /**
+     * Create the simple interface, whit File Choser.
+     */
     public SimpleGUIWithFileChooser() {
         controller = new Controller();
         final JPanel canvPanel = new JPanel();
@@ -31,35 +35,42 @@ public final class SimpleGUIWithFileChooser {
         final JButton buttonSave = new JButton("Save");
         final JButton buttonBrowse = new JButton("Browse...");
         final JTextField textField = new JTextField();
-        
+
         //Config the standard layout of GUI
         textArea.setText("");
         textField.setText(controller.getPathFile());
         textField.setEditable(false);
         canvPanel.setLayout(new BorderLayout());
         secondJPanel.setLayout(new BorderLayout());
-        
+
         //Buttons action
         buttonSave.addActionListener(new ActionListener() {
-             @Override  
+
+            @Override
             public void actionPerformed(final ActionEvent e) {
-                try{
+                try {
                     controller.writeToFile(textArea.getText());
-                } catch (IOException t) {
+                } catch (final IOException t) {
                     t.printStackTrace(); //NOPMD
                 }
                 textArea.setText("");
-            }    
+            }
         });
         buttonBrowse.addActionListener(new ActionListener() {
-            
+
             @Override 
             public void actionPerformed(final ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
+                final JFileChooser fileChooser = new JFileChooser();
 
-                if(fileChooser.showOpenDialog(textField) == JFileChooser.APPROVE_OPTION) {
+                final int resultSelcetion = fileChooser.showOpenDialog(frame);
+                if (resultSelcetion == JFileChooser.APPROVE_OPTION) {
                     controller.setNewFile(fileChooser.getSelectedFile());
                     textField.setText(controller.getPathFile());
+                } else if (resultSelcetion == JFileChooser.ERROR_OPTION) {
+                    JOptionPane.showMessageDialog(frame, 
+                              resultSelcetion, 
+                              "Problem to select the file", 
+                              JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -72,8 +83,8 @@ public final class SimpleGUIWithFileChooser {
         canvPanel.add(buttonSave, BorderLayout.SOUTH);
         frame.setContentPane(canvPanel);
 
-
     }
+
     private void display() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -86,9 +97,14 @@ public final class SimpleGUIWithFileChooser {
         frame.setVisible(true);
 
     }
-    public static void main(String... args) {
+
+    /**
+     *  Launches the application.
+     * 
+     * @param args unused
+     */
+    public static void main(final String... args) {
         new SimpleGUIWithFileChooser().display();
     }
-
 
 }
